@@ -1,8 +1,8 @@
 package in.edac.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,22 +13,29 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import in.edac.exception.ResourceNotFoundException;
 import in.edac.message.request.LoginForm;
 import in.edac.message.request.SignUpForm;
 import in.edac.message.response.JwtResponse;
 import in.edac.message.response.ResponseMessage;
+import in.edac.model.Project;
 import in.edac.model.Role;
 import in.edac.model.RoleName;
 import in.edac.model.User;
 import in.edac.security.jwt.JwtProvider;
 import in.edac.repository.UserRepository;
+import in.edac.repository.ProjectRepository;
 import in.edac.repository.RoleRepository;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -44,9 +51,15 @@ public class AuthRestAPIs {
 
 	@Autowired
 	RoleRepository roleRepository;
+	
+	@Autowired
+	ProjectRepository projectRepository;
 
 	@Autowired
 	PasswordEncoder encoder;
+	
+	@Autowired
+	EmailSenderService emailSenderService;
 
 	@Autowired
 	JwtProvider jwtProvider;
@@ -65,8 +78,78 @@ public class AuthRestAPIs {
 		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
 	}
 
+	@GetMapping("/employees")
+	public List<User> getAllEmployees(){
+		return userRepository.findAll();
+	}
+	
+	@GetMapping("/roles")
+	public List<Role> getAllRoles(){
+		return roleRepository.findAll();
+	}
+	
+	@PostMapping("/project")
+	public Project addProject(@RequestBody Project project) {
+		return projectRepository.save(project);
+	} 
+	/*
+	//create employee rest api
+	@PostMapping("/employees")
+	 public User createEmployee(@RequestBody User employee)
+	 {
+		 return userRepository.save(employee);
+	 }*/
+	
+	//get employee by id rest api
+	@GetMapping("/employees/{id}")
+	public ResponseEntity <User> getEmployeeById(@PathVariable Long id) {
+		User employee=userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Employee Does Not Exist"));
+		
+		return ResponseEntity.ok(employee);
+    }
+	
+	//update employee rest api
+	@PutMapping("/employees/{id}")
+	public ResponseEntity<User> updateEmployee(@PathVariable Long id, @RequestBody SignUpForm employeeDetails){
+		
+			User employee = userRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Employee Does Not Exist"));
+			
+			employee.setFirstname(employeeDetails.getFirstname());
+			employee.setLastname(employeeDetails.getLastname());
+			employee.setUsername(employeeDetails.getLastname());
+			employee.setMobileno(employeeDetails.getMobileno());
+			employee.setEmail(employeeDetails.getEmail());
+			Role role= roleRepository.findByName(RoleName.valueOf(employeeDetails.getRole()))
+			.orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+			
+			employee.setRole(role);
+			
+			User updatedEmployee=userRepository.save(employee);
+			return ResponseEntity.ok(updatedEmployee);
+	}
+	
+	@DeleteMapping("employees/{id}")
+	public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable Long id){
+		User employee = userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Employee Does Not Exist"));
+		
+		userRepository.delete(employee);
+        Map < String, Boolean > response = new HashMap < > ();
+        response.put("deleted", Boolean.TRUE);
+        return ResponseEntity.ok(response);	
+	}	
+	
+	
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest) {
+		
+		emailSenderService.sendSimpleEmail(signUpRequest.getEmail(), "Thank You " + signUpRequest.getFirstname()
+		+ " For join with us..  You have successfully registered with Kanban.. You can log with following credentials "
+		+ "  Username: " + signUpRequest.getFirstname()+ "   Password: " + signUpRequest.getPassword(), "Registration Successfull...!!!");
+
+		
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return new ResponseEntity<>(new ResponseMessage("Fail -> Username is already taken!"),
 					HttpStatus.BAD_REQUEST);
@@ -82,38 +165,33 @@ public class AuthRestAPIs {
 								signUpRequest.getUsername(), signUpRequest.getEmail(),signUpRequest.getMobileno(),
 				encoder.encode(signUpRequest.getPassword()));
 
-		Set<Role> roles = new HashSet<>(); 
+		//Set<Role> roles = new HashSet<>();
+		Role role = null;
 		if(signUpRequest.getRole() != null) {
-			Set<String> strRoles = signUpRequest.getRole();
+			String roleName = signUpRequest.getRole();
 
-			strRoles.forEach(role -> {
-				switch (role) {
+				switch (roleName) {
 				case "admin":
-					Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
+					role = roleRepository.findByName(RoleName.ROLE_ADMIN)
 							.orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
-					roles.add(adminRole);
 
 					break;
 				case "pm":
-					Role pmRole = roleRepository.findByName(RoleName.ROLE_PM)
+					role = roleRepository.findByName(RoleName.ROLE_PM)
 							.orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
-					roles.add(pmRole);
 
 					break;
 				default:
-					Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+					role = roleRepository.findByName(RoleName.ROLE_USER)
 							.orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
-					roles.add(userRole);
 				}
-			});
 		} else {
 			// default mode : User register 
-			Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+			role = roleRepository.findByName(RoleName.ROLE_USER)
 					.orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
-			roles.add(userRole);			
 		}
 		
-		user.setRoles(roles);
+		user.setRole(role);
 		userRepository.save(user);
 
 		return new ResponseEntity<>(new ResponseMessage("User "+ signUpRequest.getFirstname() + " is registered successfully!"), HttpStatus.OK);

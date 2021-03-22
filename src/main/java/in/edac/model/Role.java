@@ -7,9 +7,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.NaturalId;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 	@Table(name = "roles")
@@ -22,7 +25,11 @@ import org.hibernate.annotations.NaturalId;
 	    @NaturalId
 	    @Column(length = 60)
 	    private RoleName name;
-
+	    
+	    @OneToOne(mappedBy = "role")
+	    @JsonIgnore
+	    private User user;
+	    
 	    public Role() {}
 
 	    public Role(RoleName name) {
@@ -44,4 +51,12 @@ import org.hibernate.annotations.NaturalId;
 	    public void setName(RoleName name) {
 	        this.name = name;
 	    }
+
+		public User getUser() {
+			return user;
+		}
+
+		public void setUser(User user) {
+			this.user = user;
+		}
 	}

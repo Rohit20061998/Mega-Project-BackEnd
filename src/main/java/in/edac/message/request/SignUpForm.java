@@ -1,7 +1,5 @@
 package in.edac.message.request;
 
-import java.util.Set;
-
 import javax.validation.constraints.*;
 
 public class SignUpForm {
@@ -27,7 +25,7 @@ public class SignUpForm {
     private String mobileno;
     
 
-	private Set<String> role;
+	private String role;
     
     @NotBlank
     @Size(min = 6, max = 40)
@@ -80,12 +78,13 @@ public class SignUpForm {
     public void setPassword(String password) {
         this.password = password;
     }
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
     
-    public Set<String> getRole() {
-    	return this.role;
-    }
-    
-    public void setRole(Set<String> role) {
-    	this.role = role;
-    }
 }

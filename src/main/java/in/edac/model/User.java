@@ -1,16 +1,12 @@
 package in.edac.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
@@ -64,12 +60,20 @@ public class User {
     @NotBlank
     @Size(min=6, max = 100)
     private String password;
-
-    @ManyToMany(fetch = FetchType.LAZY)
+    
+    /*@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", 
     	joinColumns = @JoinColumn(name = "user_id"), 
     	inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();*/
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="role_id",referencedColumnName = "id")
+    private Role role;
+    
+    @OneToOne(mappedBy = "user")
+    
+    private Employee emp;
 
     public User() {}
 
@@ -140,11 +144,13 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+	public Role getRole() {
+		return role;
+	}
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	
 }
