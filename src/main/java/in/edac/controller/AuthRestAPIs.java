@@ -91,7 +91,7 @@ public class AuthRestAPIs {
 	@PostMapping("/project")
 	public Project addProject(@RequestBody Project project) {
 		return projectRepository.save(project);
-	} 
+	}  
 	/*
 	//create employee rest api
 	@PostMapping("/employees")
@@ -146,7 +146,7 @@ public class AuthRestAPIs {
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest) {
 		
 		emailSenderService.sendSimpleEmail(signUpRequest.getEmail(), "Thank You " + signUpRequest.getFirstname()
-		+ " For join with us..  You have successfully registered with Kanban.. You can log with following credentials "
+		+ " For join with us..  You have successfully registered with Kanban.. You can sign in  with following credentials "
 		+ "  Username: " + signUpRequest.getFirstname()+ "   Password: " + signUpRequest.getPassword(), "Registration Successfull...!!!");
 
 		

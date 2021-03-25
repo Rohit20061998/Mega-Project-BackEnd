@@ -20,6 +20,7 @@ public class Project{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="project_id")
 	private long projectId;
+	
 	@OneToMany(mappedBy = "project")
 	@JsonIgnore
     private List<Employee> employee;
@@ -29,6 +30,7 @@ public class Project{
     private List<Task> task;
     
 	private String projectName;
+	
 //	private long team_lead_id;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "team_lead_id", referencedColumnName = "id")

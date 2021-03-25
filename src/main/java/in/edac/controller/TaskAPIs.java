@@ -1,15 +1,10 @@
 package in.edac.controller;
 
 import java.security.Principal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +47,36 @@ public class TaskAPIs {
 	public List<Task> getAllTask(){
 		return taskRepository.findAll();
 	}	
+	
+	@GetMapping("/task/{id}")
+	public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+		Task task = taskRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("task not exist with id :" + id));
+		return ResponseEntity.ok(task);
+	}
+	
+	@PutMapping("/task/{id}")
+	public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody TaskForm taskDetails){
+		
+			Task task= taskRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Task Not Exist"));
+			
+			Employee employee=  employeeRepository.findById(taskDetails.getEmpid()).orElseThrow(()-> new RuntimeException("Fail!-> Cause:Employee not found."));
+		 task.setEmployee1(employee);
+		
+		Project project = projectRepository.findById(taskDetails.getProjectid()).orElseThrow(()-> new RuntimeException("Fail!-> Cause:Project not found."));
+		task.setProject(project);
+			
+			task.setTaskname(taskDetails.getTaskname());
+			task.setStartdate(taskDetails.getStartdate());
+			task.setEnddate(taskDetails.getEnddate());
+		    task.setStatus(taskDetails.getStatus());
+			
+			Task updatedTask=taskRepository.save(task);
+			return ResponseEntity.ok(updatedTask);
+	}
+
+	
 	@PostMapping("/task")
 	public Task createTask(@RequestBody TaskForm task1, HttpServletRequest request) {
 		Task task= new Task();
@@ -61,9 +86,9 @@ public class TaskAPIs {
 		Project project = projectRepository.findById(task1.getProjectid()).orElseThrow(()-> new RuntimeException("Fail!-> Cause:Project not found."));
 		task.setProject(project);
 		
-		task.setStartDate(task1.getStartdate());
-		task.setEndDate(task1.getEnddate());
-		task.setTaskName(task1.getTaskname());
+		task.setStartdate(task1.getStartdate());
+		task.setEnddate(task1.getEnddate());
+		task.setTaskname(task1.getTaskname());
 		task.setStatus(task1.getStatus());
 		
 		Principal principal = request.getUserPrincipal();
@@ -90,21 +115,4 @@ public class TaskAPIs {
 	response.put("deleted",Boolean.TRUE);
 	return ResponseEntity.ok(response);
 	}
-	@PutMapping("/task/{id}")
-	public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails){
-		
-		Task task = taskRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Task Does Not Exist"));
-		
-		
-		task.setTaskName(taskDetails.getTaskName());
-		task.setEmployee1(taskDetails.getEmployee1());
-		task.setProject(taskDetails.getProject());
-		task.setStartDate(taskDetails.getStartDate());
-		task.setEndDate(taskDetails.getEndDate());
-		task.setStatus(taskDetails.getStatus());
-		task.setTeamLead(taskDetails.getTeamLead());
-		Task updatedTask =taskRepository.save(task);
-		return ResponseEntity.ok(updatedTask);
-}
 }

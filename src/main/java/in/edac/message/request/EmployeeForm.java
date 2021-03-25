@@ -2,10 +2,9 @@ package in.edac.message.request;
 
 public class EmployeeForm {
 	private long empid;
-	private long userid;
-	private long projectid;
+	private String useremail;
+	private String projectname;
 	private long taskid;
-	
 	
 	public long getEmpid() {
 		return empid;
@@ -13,17 +12,17 @@ public class EmployeeForm {
 	public void setEmpid(long empid) {
 		this.empid = empid;
 	}
-	public long getUserid() {
-		return userid;
+	public String getUseremail() {
+		return useremail;
 	}
-	public void setUserid(long userid) {
-		this.userid = userid;
+	public void setUseremail(String useremail) {
+		this.useremail = useremail;
 	}
-	public long getProjectid() {
-		return projectid;
+	public String getProjectname() {
+		return projectname;
 	}
-	public void setProjectid(long projectid) {
-		this.projectid = projectid;
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
 	}
 	public long getTaskid() {
 		return taskid;
@@ -31,7 +30,8 @@ public class EmployeeForm {
 	public void setTaskid(long taskid) {
 		this.taskid = taskid;
 	}
-
+	
+	
 	
 }
 

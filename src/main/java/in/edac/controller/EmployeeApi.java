@@ -46,15 +46,17 @@ public class EmployeeApi {
 	}		
 	
 	
-	@PostMapping("/employees")
+	@PostMapping("/employee")
 	public Employee createEmployee(@RequestBody EmployeeForm employee1, HttpServletRequest request) {
 		Employee employee = new Employee();
 		
-		User user =  userRepository.findById(employee1.getUserid()).orElseThrow(()-> new RuntimeException("Fail!-> Cause:User not found."));
-		employee.setUser(user);
+		User us = userRepository.findByEmail(employee1.getUseremail());//(()-> new RuntimeException("Fail!-> Cause:Project not found."));
+		employee.setUser(us);
 		
-		Project project = projectRepository.findById(employee1.getProjectid()).orElseThrow(()-> new RuntimeException("Fail!-> Cause:Project not found."));
+		Project project = projectRepository.findByProjectName(employee1.getProjectname());//(()-> new RuntimeException("Fail!-> Cause:Project not found."));
 		employee.setProject(project);
+		
+		
 		Principal principal = request.getUserPrincipal();
 		String name = principal.getName();
 		if(name != null) {

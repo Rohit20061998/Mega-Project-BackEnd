@@ -2,24 +2,17 @@ package in.edac.message.request;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
-import in.edac.model.Employee;
-import in.edac.model.Project;
-import in.edac.model.User;
-
 public class TaskForm {
 
-	private long taskid;
+	private long taskId;
 	private long projectid;
 	private long empid;
 	private String taskname;
 	private Date startdate;
 	private Date enddate;
 	private String status;
+	
+	
 	public String getTaskname() {
 		return taskname;
 	}
@@ -41,14 +34,14 @@ public class TaskForm {
 	public String getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void String(String status) {
 		this.status = status;
 	}
-	public long getTaskid() {
-		return taskid;
+	public long getTaskId() {
+		return taskId;
 	}
-	public void setTaskid(long taskid) {
-		this.taskid = taskid;
+	public void setTaskId(long taskId) {
+		this.taskId = taskId;
 	}
 	
 	public long getProjectid() {

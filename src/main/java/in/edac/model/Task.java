@@ -1,8 +1,6 @@
 package in.edac.model;
 
 import java.util.Date;
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,22 +9,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import in.edac.repository.CustomerDateAndTimeDeserialize;
 
-@Entity
 
+@Entity
 public class Task{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="task_id")
 	private long taskId;
-	private String taskName;
+	
+	private String taskname;
+	
+	
 	@ManyToOne
 	 @JoinColumn(name="emp_id")
     private Employee employee1;
@@ -37,97 +36,99 @@ public class Task{
     private Project project;
 
 @JsonDeserialize(using=CustomerDateAndTimeDeserialize.class)
-	private Date startDate;
+	private Date startdate;
 
 @JsonDeserialize(using=CustomerDateAndTimeDeserialize.class)
-	private Date endDate;
-	private String status;
-//	private String assignedBy;
-	   
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="assignedBy",referencedColumnName = "id")
-    private User teamLead;
-	public Task() {
-		super();
-	}
+	private Date enddate;
+private String status;
+//private String assignedBy;
+   
+@OneToOne(cascade = CascadeType.ALL)
+@JoinColumn(name="assignedBy",referencedColumnName = "id")
 
-	public Task(String taskName, Employee employee1, Project project, Date startDate, Date endDate, String status,
-			User teamLead) {
-		super();
-		this.taskName = taskName;
-		this.employee1 = employee1;
-		this.project = project;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.status = status;
-		this.teamLead = teamLead;
-	}
+private User teamLead;
 
-	public long getTaskId() {
-		return taskId;
-	}
+public Task() {
+	super();
+}
 
-	public void setTaskId(long taskId) {
-		this.taskId = taskId;
-	}
+public Task(String taskname, Employee employee1, Project project, Date startdate, Date enddate, String status,
+		User teamLead) {
+	super();
+	this.taskname = taskname;
+	this.employee1 = employee1;
+	this.project = project;
+	this.startdate = startdate;
+	this.enddate = enddate;
+	this.status = status;
+	this.teamLead = teamLead;
+}
 
-	public String getTaskName() {
-		return taskName;
-	}
+public long getTaskId() {
+	return taskId;
+}
 
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
-	}
+public void setTaskId(long taskId) {
+	this.taskId = taskId;
+}
 
-	public Employee getEmployee1() {
-		return employee1;
-	}
+public String getTaskname() {
+	return taskname;
+}
 
-	public void setEmployee1(Employee employee1) {
-		this.employee1 = employee1;
-	}
+public void setTaskname(String taskname) {
+	this.taskname = taskname;
+}
 
-	public Project getProject() {
-		return project;
-	}
+public Employee getEmployee1() {
+	return employee1;
+}
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+public void setEmployee1(Employee employee1) {
+	this.employee1 = employee1;
+}
 
-	public Date getStartDate() {
-		return startDate;
-	}
+public Project getProject() {
+	return project;
+}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+public void setProject(Project project) {
+	this.project = project;
+}
 
-	public Date getEndDate() {
-		return endDate;
-	}
+public Date getStartdate() {
+	return startdate;
+}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+public void setStartdate(Date startdate) {
+	this.startdate = startdate;
+}
 
-	public String getStatus() {
-		return status;
-	}
+public Date getEnddate() {
+	return enddate;
+}
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+public void setEnddate(Date enddate) {
+	this.enddate = enddate;
+}
 
-	public User getTeamLead() {
-		return teamLead;
-	}
+public String getStatus() {
+	return status;
+}
 
-	public void setTeamLead(User teamLead) {
-		this.teamLead = teamLead;
-	}
+public void setStatus(String status) {
+	this.status = status;
+}
 
-	
+public User getTeamLead() {
+	return teamLead;
+}
+
+public void setTeamLead(User teamLead) {
+	this.teamLead = teamLead;
+}
+
+
 	
 	
 }

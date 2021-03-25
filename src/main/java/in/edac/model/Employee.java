@@ -21,44 +21,39 @@ public class Employee {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="emp_id")
 	private long empId;
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
+	
 	@ManyToOne
-	@JoinColumn(name = "project_id")
+	@JoinColumn(name = "project_id",referencedColumnName="project_id")
 	private Project project;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "team_lead_id", referencedColumnName = "id")
 	private User teamLead;
 //	private long team_lead_id;
+	
 	@OneToMany(mappedBy = "employee1")
 	@JsonIgnore
 	private List<Task> taskId;
 
-
-
 	public Employee() {
 	super();
 }
-	
-	
+
 	public Employee(User user, Project project, User teamLead, List<Task> taskId) {
-	super();
-	this.user = user;
-	this.project = project;
-	this.teamLead = teamLead;
-	this.taskId = taskId;
-}
-
-
-
+		super();
+		this.user = user;
+		this.project = project;
+		this.teamLead = teamLead;
+		this.taskId = taskId;
+	}
 
 	public long getEmpId() {
 		return empId;
 	}
-
-
 
 	public void setEmpId(long empId) {
 		this.empId = empId;
@@ -70,47 +65,33 @@ public class Employee {
 		return user;
 	}
 
-
-
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-
 
 	public Project getProject() {
 		return project;
 	}
 
-
-
 	public void setProject(Project project) {
 		this.project = project;
 	}
-
-
 
 	public User getTeamLead() {
 		return teamLead;
 	}
 
-
-
 	public void setTeamLead(User teamLead) {
 		this.teamLead = teamLead;
 	}
-
-
 
 	public List<Task> getTaskId() {
 		return taskId;
 	}
 
-
-
 	public void setTaskId(List<Task> taskId) {
 		this.taskId = taskId;
 	}
-
+	
 
 }
