@@ -130,12 +130,12 @@ public class AuthRestAPIs {
 			return ResponseEntity.ok(updatedEmployee);
 	}
 	
-	@DeleteMapping("employees/{id}")
+	@DeleteMapping("delete/{id}")
 	public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable Long id){
-		User employee = userRepository.findById(id)
+		User user = userRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee Does Not Exist"));
 		
-		userRepository.delete(employee);
+		userRepository.delete(user);
         Map < String, Boolean > response = new HashMap < > ();
         response.put("deleted", Boolean.TRUE);
         return ResponseEntity.ok(response);	

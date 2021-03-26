@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import in.edac.exception.ResourceNotFoundException;
+import in.edac.model.Employee;
 import in.edac.model.Project;
+import in.edac.model.Role;
 import in.edac.model.User;
 import in.edac.repository.ProjectRepository;
 import in.edac.repository.UserRepository;
@@ -76,6 +78,25 @@ public class ProjectAPIs {
 		Project updatedProject = projectRepository.save(project);
 		return ResponseEntity.ok(updatedProject);
 }
-
 	
+	@GetMapping("/project1")
+	public List<Project> getProject(HttpServletRequest request){
+		Principal principal = request.getUserPrincipal();
+		String name = principal.getName();
+			User user = userRepository.findByUsername(name)
+			 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User not find."));
+			
+			Role role = null;
+			String roleName =user.getRole().getName().toString();
+			String Role="ROLE_PM";
+			if(roleName==Role)
+			{
+				Long id=user.getId();
+				return projectRepository.findAllBy(id);
+			}
+			else
+			{
+				return projectRepository.findAll();
+			}		
+	}
 }
